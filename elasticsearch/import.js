@@ -81,13 +81,15 @@ function createNewIndex() {
               type: "date"
             },
             category: {
-              type: "text"
+              type: "text",
+              fielddata: true
             },
             title: {
-              type: "text"
+              type: "text",
+              fielddata: true
             },
             city: {
-              type: "text"
+              type: "keyword"
             }
           }
         }
