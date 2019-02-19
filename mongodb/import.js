@@ -7,7 +7,7 @@ var mongoUrl = 'mongodb://localhost:27017/911-calls';
 
 var insertCalls = function(db, callback) {
     var collection = db.collection('calls');
-    if(collection.count()>0)
+    if(collection.findOne()!="null")
         collection.drop();
     var calls = [];
     fs.createReadStream('../911.csv')
@@ -35,10 +35,14 @@ MongoClient.connect(mongoUrl, (err, db) => {
  */
 function createJSONCall(data) {
     return {
-      location: data.lat+","+data.lng,
+      location: {
+        type: "Point",
+        coordinates: [data.lat, data.lng]
+      },
       datetime: new Date(data.timeStamp),
       category: data.title.split(":", 2)[0],
       title: data.title.split(":", 2)[1],
       city: data.twp
     };
   }
+
