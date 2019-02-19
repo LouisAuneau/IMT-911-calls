@@ -7,12 +7,13 @@ var mongoUrl = 'mongodb://localhost:27017/911-calls';
 
 var insertCalls = function(db, callback) {
     var collection = db.collection('calls');
-
+    if(collection.count()>0)
+        collection.drop();
     var calls = [];
     fs.createReadStream('../911.csv')
         .pipe(csv())
         .on('data', data => {
-            var call = {}; // TODO créer l'objet call à partir de la ligne
+            var call = createJSONCall(data);
             calls.push(call);
         })
         .on('end', () => {
@@ -28,3 +29,16 @@ MongoClient.connect(mongoUrl, (err, db) => {
         db.close();
     });
 });
+
+/**
+ * Create JSON object to be inserted in Mongo for a given call.
+ */
+function createJSONCall(data) {
+    return {
+      location: data.lat+","+data.lng,
+      datetime: new Date(data.timeStamp),
+      category: data.title.split(":", 2)[0],
+      title: data.title.split(":", 2)[1],
+      city: data.twp
+    };
+  }
