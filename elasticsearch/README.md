@@ -83,15 +83,44 @@ GET localhost:9200/calls/_search
 ```
 On trouvera le nombre d'appel pour chaque mois dans `aggregations > calls_per_months > buckets`. Dans chaque bucket, la valeur `key_as_string` est le mois. Les mois sont triés par ordre de nombre d'appels décroissant. On ne peut cependant pas sélectionner les 3 premiers, car le paramètre `size` n'a pas été implémenté pour les aggregations de type `date_histogram`.
 
-
+```
+GET localhost:9200/calls/_search
+{
+	"size": 0,
+	"query": {
+		"match": {
+			"title": "overdose"
+		}
+	},
+    "aggs" : {
+        "city" : {
+            "terms" : {
+                "field": "city",
+                "size": 3,
+                "order": { 
+                	"_count": "desc" 
+                }
+            }
+        }
+    }
+}
+```
 
 ## Kibana
 
 Dans Kibana, créez un dashboard qui permet de visualiser :
 
-* Une carte de l'ensemble des appels
+* Une carte de l'ensemble des appels  
+
+![images/heatmap.png](images/heatmap.png)
+
 * Un histogramme des appels répartis par catégories
+
+![images/histogram.png](images/histogram.png)
+
 * Un Pie chart réparti par bimestre, par catégories et par canton (township)
+
+![images/piechart.png](images/piechart.png)
 
 Pour nous permettre d'évaluer votre travail, ajoutez une capture d'écran du dashboard dans ce répertoire [images](images).
 
