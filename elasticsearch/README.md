@@ -133,5 +133,9 @@ Réalisez le diagramme suivant :
 Envoyer la réponse sous la forme de la requête Timelion ci-dessous:  
 
 ```
-TODO : ajouter la requête Timelion ici
+.es(q='category:"fire" AND datetime: [2016-07-08 TO 2017-01-08]', index=calls, timefield=datetime).cusum().label("Last 6 months of Fire calls"),
+
+.es(q='category:"fire" AND datetime: [2016-01-08 TO 2016-07-07]', index=calls, timefield=datetime, offset=-6M).cusum().label("Previous 6 months of Fire calls"),
+
+.static(6700).label(Objective).lines(fill=1)
 ```
