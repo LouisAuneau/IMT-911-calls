@@ -26,6 +26,7 @@ var insertCalls = function(db, callback) {
 MongoClient.connect(mongoUrl, (err, db) => {
     insertCalls(db, result => {
         console.log(`${result.insertedCount} calls inserted`);
+        addIndexes(db);
         db.close();
     });
 });
@@ -37,12 +38,20 @@ function createJSONCall(data) {
     return {
       location: {
         type: "Point",
-        coordinates: [data.lat, data.lng]
+        coordinates: [parseFloat(data.lng), parseFloat(data.lat)]
       },
       datetime: new Date(data.timeStamp),
       category: data.title.split(":", 2)[0],
       title: data.title.split(":", 2)[1],
       city: data.twp
     };
-  }
+}
 
+function addIndexes(db){
+    db.collection('calls').createIndex( 
+        { location : "2dsphere" }
+    );
+    db.collection('calls').createIndex( 
+        { title : "text" }
+    );
+}
